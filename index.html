@@ -1,0 +1,62 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Delaware City School District Status</title>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+<style>
+    body {
+        font-family: Arial, sans-serif;
+        background: #f0f4f8; 
+        padding: 20px;
+        text-align: center;
+        margin: 0;
+    }
+    .header {
+        margin-bottom: 20px;
+        padding: 10px 0;
+    }
+    #status {
+        font-size: 4rem; 
+        font-weight: bold;
+        padding: 40px;
+        border-radius: 15px;
+        display: inline-block;
+        margin-top: 20px;
+        min-width: 300px;
+        color: white; 
+        box-shadow: 0 10px 25px rgba(0,0,0,0.15);
+        transition: background-color 0.5s ease;
+    }
+    /* Status Coloring (Used by script.js) */
+    .open { background: #4CAF50; } 
+    .delayed { background: #FF9800; } 
+    .closed { background: #F44336; } 
+    .unknown { background: #607D8B; } 
+
+    .metadata {
+        margin-top: 20px;
+        color: #666;
+        font-size: 0.9rem;
+    }
+</style>
+</head>
+<body>
+
+<div class="header">
+    <h1>Delaware City School District</h1>
+    <h3>Real-Time Status</h3>
+</div>
+
+<div id="status" class="unknown">Loading...</div>
+
+<div class="metadata">
+    <p>Last Updated: <span id="last-updated">--:--:--</span></p>
+    <p>Auto-updates every 30 seconds from a reliable news source proxy.</p>
+</div>
+
+<script src="script.js"></script>
+
+</body>
+</html>
