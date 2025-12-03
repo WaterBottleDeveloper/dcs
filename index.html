@@ -8,8 +8,8 @@
 <style>
 body {
     font-family: Arial, sans-serif;
-    background: #1e1e1e; /* Dark Gray Background */
-    color: #f0f0f0; /* Light Text */
+    background: #1e1e1e; /* Dark Gray */
+    color: #f0f0f0; /* Off-white text */
     padding: 20px;
     text-align: center;
 }
@@ -21,13 +21,17 @@ body {
     display: inline-block;
     margin-top: 20px;
     min-width: 250px;
-    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.4); /* Added subtle shadow */
+    box-shadow: 0 4px 15px rgba(0,0,0,0.5);
+    transition: background-color 0.3s ease;
 }
-/* --- Darker Status Colors --- */
-.open { background: #388e3c; color: white; } /* Darker Green */
-.delay { background: #f57f17; color: black; } /* Darker Amber/Orange */
-.closed { background: #c62828; color: white; } /* Darker Red */
-.unknown { background: #546e7a; color: white; } /* Dark Slate Gray */
+.open { background: #2e7d32; color: white; border: 2px solid #1b5e20; }
+.delay { background: #ef6c00; color: white; border: 2px solid #e65100; }
+.closed { background: #c62828; color: white; border: 2px solid #b71c1c; }
+.unknown { background: #455a64; color: white; border: 2px solid #263238; }
+
+h1 { margin-bottom: 5px; color: #ffffff; }
+h3 { margin-top: 5px; color: #b0bec5; font-weight: normal; }
+p { color: #90a4ae; font-size: 14px; margin-top: 30px; }
 </style>
 </head>
 <body>
@@ -40,62 +44,47 @@ body {
 <p>Auto-updates every 30 seconds.</p>
 
 <script>
-// IMPORTANT: This API is your old source, which is unstable due to CORS. 
-// You should update this to your working Render proxy URL:
-// const API = "https://delaware-status-proxy.onrender.com/status"; 
-//
-// However, since you provided the original code, I've left the API intact for now.
-
-const API = "https://schoolstatus.io/api/v1/closings?state=OH"; // Original API Endpoint
+// THIS IS YOUR RENDER PROXY URL
+const API = "https://delaware-status-proxy.onrender.com/status";
 
 async function loadStatus() {
     const box = document.getElementById("status");
-    box.textContent = "Checking...";
+    
+    // Only show "Checking..." on the very first load to avoid flickering
+    if (box.textContent === "Loading...") {
+        box.textContent = "Checking...";
+    }
 
     try {
         const response = await fetch(API);
         const data = await response.json();
 
-        // --- NOTE: This client-side logic only works if you switch the API back to your proxy URL ---
-        
-        // Look for Delaware City School District
-        const district = data.find(item =>
-            item.name.toLowerCase().includes("delaware city school district")
-        );
+        // The proxy returns { status: "OPEN" } directly. 
+        // We do not need to search for district names here anymore.
+        const status = data.status.toUpperCase();
 
-        if (!district) {
-            // This is the logic for the original API which is now broken.
-            // When using your proxy, the box should simply read the status property directly.
-            box.textContent = "No data / Not reported";
-            box.className = "unknown";
-            return;
-        }
-
-        // Possible statuses this API returns:
-        // "open" | "delayed" | "closed"
-        const status = district.status.toLowerCase();
-
-        if (status === "open") {
+        if (status === "OPEN") {
             box.textContent = "OPEN";
             box.className = "open";
-        } else if (status.includes("delay")) {
+        } else if (status.includes("DELAY")) {
             box.textContent = "DELAYED";
             box.className = "delay";
-        } else if (status === "closed") {
+        } else if (status === "CLOSED") {
             box.textContent = "CLOSED";
             box.className = "closed";
         } else {
-            box.textContent = district.status;
+            box.textContent = "OFFLINE / UNKNOWN";
             box.className = "unknown";
         }
 
     } catch (err) {
-        box.textContent = "Error fetching data";
+        console.error(err);
+        box.textContent = "Connection Error";
         box.className = "unknown";
     }
 }
 
-// run immediately + refresh every 30s
+// Run immediately + refresh every 30s
 loadStatus();
 setInterval(loadStatus, 30000);
 </script>
